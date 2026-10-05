@@ -133,4 +133,30 @@ public class UserService {
         return true;
     }
 
+    public boolean resendVerificationCode(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            return false;
+        }
+
+        if (user.getVerified()) {
+            return false;
+        }
+
+        String newCode = generateVerificationCode();
+
+        user.setVerificationCode(newCode);
+        user.setVerificationExpiresAt(LocalDateTime.now().plusMinutes(10));
+
+        userRepository.save(user);
+
+        emailService.sendVerificationEmail(
+                user.getEmail(),
+                newCode
+        );
+
+        return true;
+    }
+
 }

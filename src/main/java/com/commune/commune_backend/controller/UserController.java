@@ -58,4 +58,15 @@ public class UserController {
 
         return "Invalid or expired verification code";
     }
+
+    @PostMapping("/resend-verification")
+    public String resendVerificationCode(@RequestBody ResendVerificationRequest request) {
+        boolean sent = userService.resendVerificationCode(request.getEmail());
+
+        if (sent) {
+            return "Verification code sent successfully";
+        }
+
+        return "Unable to resend verification code";
+    }
 }

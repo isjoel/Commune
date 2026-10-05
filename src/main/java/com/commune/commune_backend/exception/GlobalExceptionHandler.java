@@ -23,4 +23,10 @@ public class GlobalExceptionHandler {
                 .get(0)
                 .getDefaultMessage();
     }
+
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleEmailNotVerified(EmailNotVerifiedException exception) {
+        return exception.getMessage();
+    }
 }
