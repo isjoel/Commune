@@ -41,6 +41,12 @@ public class User {
     @Column(name = "verification_expires_at")
     private LocalDateTime verificationExpiresAt;
 
+    @Column(name = "reset_code")
+    private String resetCode;
+
+    @Column(name = "reset_code_expires_at")
+    private LocalDateTime resetCodeExpiresAt;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -131,6 +137,22 @@ public class User {
 
     public void setVerificationExpiresAt(LocalDateTime verificationExpiresAt) {
         this.verificationExpiresAt = verificationExpiresAt;
+    }
+
+    public String getResetCode() {
+        return resetCode;
+    }
+
+    public void setResetCode(String resetCode) {
+        this.resetCode = resetCode;
+    }
+
+    public LocalDateTime getResetCodeExpiresAt() {
+        return resetCodeExpiresAt;
+    }
+
+    public void setResetCodeExpiresAt(LocalDateTime resetCodeExpiresAt) {
+        this.resetCodeExpiresAt = resetCodeExpiresAt;
     }
 
     public LocalDateTime getCreatedAt() {

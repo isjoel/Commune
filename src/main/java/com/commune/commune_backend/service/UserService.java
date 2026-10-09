@@ -159,4 +159,56 @@ public class UserService {
         return true;
     }
 
+    public boolean forgotPassword(String email){
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null){
+            return false;
+        }
+
+        String resetCode = generateVerificationCode();
+
+        user.setResetCode(resetCode);
+
+        user.setResetCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+
+        userRepository.save(user);
+
+        emailService.sendPasswordResetEmail(
+                user.getEmail(),
+                resetCode
+        );
+
+        return true;
+    }
+    
+    public boolean resetPassword(String email, String code, String newPassword) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        
+        if (user == null) {
+            return false;
+        }
+        
+        if (user.getResetCode() == null) {
+            return false;
+        }
+        
+        if (user.getResetCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+        
+        if (!user.getResetCode().equals(code)) {
+            return false;
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        user.setResetCode(null);
+        user.setResetCodeExpiresAt(null);
+
+        userRepository.save(user);
+
+        return true;
+    }
+
 }

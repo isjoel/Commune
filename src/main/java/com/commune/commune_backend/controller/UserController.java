@@ -69,4 +69,30 @@ public class UserController {
 
         return "Unable to resend verification code";
     }
+
+    @PostMapping("/forgot-password")
+    public String forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        boolean sent = userService.forgotPassword(request.getEmail());
+
+        if (sent) {
+            return "Password reset code sent successfully";
+        }
+
+        return "Unable to process password reset request";
+    }
+    
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestBody ResetPasswordRequest request) {
+        boolean reset = userService.resetPassword(
+                request.getEmail(),
+                request.getCode(),
+                request.getNewPassword()
+        );
+
+        if (reset){
+            return "Password reset successfully";
+        }
+
+        return "Invalid or expired reset code";
+    }
 }
