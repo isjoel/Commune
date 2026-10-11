@@ -1,10 +1,14 @@
 package com.commune.commune_backend.controller;
 
+import com.commune.commune_backend.dto.ResendVerificationResponse;
 import com.commune.commune_backend.model.*;
 import com.commune.commune_backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
 
 @RestController // it tells spring that this class will handle http requests from the frontend
 public class UserController {
@@ -59,16 +63,22 @@ public class UserController {
         return "Invalid or expired verification code";
     }
 
-    @PostMapping("/resend-verification")
-    public String resendVerificationCode(@RequestBody ResendVerificationRequest request) {
-        boolean sent = userService.resendVerificationCode(request.getEmail());
 
-        if (sent) {
-            return "Verification code sent successfully";
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<ResendVerificationResponse> resendVerificationCode(
+            @RequestBody ResendVerificationRequest request) {
+
+        ResendVerificationResponse response =
+                userService.resendVerificationCode(request.getEmail());
+
+        if (response.getExpiresAt() != null) {
+            return ResponseEntity.ok(response);
         }
 
-        return "Unable to resend verification code";
+        return ResponseEntity.badRequest().body(response);
     }
+
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestBody ForgotPasswordRequest request) {

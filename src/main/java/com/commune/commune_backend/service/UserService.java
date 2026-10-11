@@ -1,5 +1,6 @@
 package com.commune.commune_backend.service;
 
+import com.commune.commune_backend.dto.ResendVerificationResponse;
 import com.commune.commune_backend.exception.DuplicateUserException;
 import com.commune.commune_backend.model.LoginResponse;
 import com.commune.commune_backend.model.ProfileResponse;
@@ -133,15 +134,19 @@ public class UserService {
         return true;
     }
 
-    public boolean resendVerificationCode(String email) {
+    public ResendVerificationResponse resendVerificationCode(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
-            return false;
+            return new ResendVerificationResponse(
+                    "Unable to resend verification code", null
+            );
         }
 
         if (user.getVerified()) {
-            return false;
+            return new ResendVerificationResponse(
+                    "Unable to resend verification code", null
+            );
         }
 
         String newCode = generateVerificationCode();
@@ -156,7 +161,10 @@ public class UserService {
                 newCode
         );
 
-        return true;
+        return new ResendVerificationResponse(
+                "Verification code sent successfully",
+                user.getVerificationExpiresAt()
+        );
     }
 
     public boolean forgotPassword(String email){
